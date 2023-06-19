@@ -2,7 +2,4 @@ pandas~=1.5.3
 pytest~=7.2.2
 beautifulsoup4==4.12.2
 requests==2.31.0
-subprocess
-os
-time
-json
+subprocess==3.10
