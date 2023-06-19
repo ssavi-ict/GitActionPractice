@@ -128,10 +128,14 @@ class CONTEST(object):
     # noinspection PyMethodMayBeStatic
     def store_valid_contests_in_json(self):
         contests = self.filter_valid_contests()
-        print(contest)
+        print(contests)
         # self.create_a_contest_json()
         with open(self.contest_info_path, 'w') as file:
             json.dump(contests, file)
+        time.sleep(1.0)
+        with open(self.contest_info_path, 'r') as f:
+            data = json.load(f)
+        print(data)
 
     # noinspection PyMethodMayBeStatic
     def create_a_contest_json(self):
