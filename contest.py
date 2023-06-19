@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from config import CONFIG
 import os
-import subprocess
+import git
 
 
 class GitOps:
@@ -18,20 +18,24 @@ class GitOps:
 
     # Git pull to fetch the recent changes
     def git_pull(self):
-        subprocess.run(["git", "pull", self.remote_name, self.branch_name], cwd=self.repo_directory)
+        repo = git.Repo(self.repo_directory)
+        origin = repo.remote(self.remote_name)
+        origin.pull(self.branch_name)
 
     # Git add the file if changes are detected
     def git_add_file(self):
-        subprocess.run(["git", "add", self.file_to_track], cwd=self.repo_directory)
+        repo = git.Repo(self.repo_directory)
+        repo.index.add([self.file_to_track])
 
     # Git commit the changes with a message
     def git_commit(self, message):
-        subprocess.run(["git", "commit", "-m", message], cwd=self.repo_directory)
+        repo = git.Repo(self.repo_directory)
+        repo.index.commit(message)
 
     # Raise a pull request using GitHub API
     def raise_pull_request(self):
         url = f"https://api.github.com/repos/{self.remote_name}/{self.repo_directory}/pulls"
-        headers = {"Authorization": f"token {0}".format(CONFIG.PAT)}
+        headers = {"Authorization": "token YOUR_GITHUB_TOKEN"}
 
         payload = {
             "title": "Pull Request Title",
@@ -48,14 +52,13 @@ class GitOps:
 
     # Check if there are changes in the file
     def has_changes(self):
-        status_output = subprocess.check_output(["git", "status", "--porcelain", self.file_to_track],
-                                                cwd=self.repo_directory)
-        return bool(status_output.strip())
+        repo = git.Repo(self.repo_directory)
+        return repo.is_dirty(path=self.file_to_track)
 
     # Check if the Git repository is clean
     def is_repository_clean(self):
-        status_output = subprocess.check_output(["git", "status", "--porcelain"], cwd=self.repo_directory)
-        return not bool(status_output.strip())
+        repo = git.Repo(self.repo_directory)
+        return not repo.is_dirty()
 
     # Run the Git operations
     def run_git_operations(self, commit_message):
