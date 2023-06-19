@@ -22,4 +22,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Python script
-        run: python contest.py
+        run: python .github/workflows/contest.py
