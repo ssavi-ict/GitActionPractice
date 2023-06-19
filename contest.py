@@ -35,7 +35,7 @@ class GitOps:
     # Raise a pull request using GitHub API
     def raise_pull_request(self):
         url = f"https://api.github.com/repos/{self.remote_name}/{self.repo_directory}/pulls"
-        headers = {"Authorization": "token YOUR_GITHUB_TOKEN"}
+        headers = {"Authorization": "token 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"}
 
         payload = {
             "title": "Pull Request Title",
