@@ -11,7 +11,7 @@ import git
 class GitOps:
 
     def __init__(self):
-        self.repo_directory = CONFIG.GIT_REPO
+        self.repo_directory = os.getcwd()
         self.remote_name = "origin"
         self.branch_name = "main"
         self.file_to_track = "contests.json"
