@@ -128,7 +128,8 @@ class CONTEST(object):
     # noinspection PyMethodMayBeStatic
     def store_valid_contests_in_json(self):
         contests = self.filter_valid_contests()
-        self.create_a_contest_json()
+        print(contest)
+        # self.create_a_contest_json()
         with open(self.contest_info_path, 'w') as file:
             json.dump(contests, file)
 
