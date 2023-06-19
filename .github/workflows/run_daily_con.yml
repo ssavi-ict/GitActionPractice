@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Copy config.py
-        run: cp path/to/config.py .
+        run: config.py
 
       - name: Run Python script
         run: python contest.py
