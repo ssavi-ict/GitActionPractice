@@ -142,9 +142,9 @@ class CONTEST(object):
 
 
 if __name__ == '__main__':
-    # current_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    current_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    current_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    # current_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     data_path = os.path.join(current_path, 'data')
     contest_info_json_path = os.path.join(data_path, 'contests.json')
     git_ops = GitOps()
