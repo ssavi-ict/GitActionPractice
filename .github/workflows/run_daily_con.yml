@@ -1,0 +1,28 @@
+name: Run Script
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Schedule the workflow to run at 00:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Copy config.py
+        run: cp path/to/config.py .
+
+      - name: Run Python script
+        run: python contest.py
