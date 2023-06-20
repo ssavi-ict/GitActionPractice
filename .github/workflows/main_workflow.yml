@@ -38,7 +38,7 @@ jobs:
         id: git-diff
         run: |
           git fetch origin main
-          changes=$(git diff --name-only main)
+          changes=$(git diff --name-only main -- data/contests.json)
           echo "::set-output name=changes::$changes"
 
       - name: Commit and push changes
