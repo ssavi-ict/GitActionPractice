@@ -42,7 +42,7 @@ jobs:
         run: |
           git fetch origin main
           changes=$(git diff --name-only main -- data/contests.json)
-          echo "::set-output name=changes::$changes"
+          echo "{changes}={$changes}" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
         if: steps.git-diff.outputs.changes != ''
