@@ -27,7 +27,7 @@ jobs:
           if [ -n "$branch_exists" ]; then
             git fetch origin automate-c-json-update
             git checkout automate-c-json-update
-            git config --global pull.rebase false
+            git config --global pull.ff only
             git pull origin main
           else
             git checkout -b automate-c-json-update
