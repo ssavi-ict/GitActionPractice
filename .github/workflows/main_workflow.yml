@@ -21,30 +21,21 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Check if branch exists
-        run: |
-          branch_exists=$(git ls-remote --exit-code --heads origin automate-c-json-update || echo "")
-          if [ -n "$branch_exists" ]; then
-            git checkout automate-c-json-update
-            git pull origin main
-          else
-            git checkout -b automate-c-json-update
-          fi
+      - name: Check for changes
+        id: git-diff
+        run: echo "::set-output name=changes::$(git diff --name-only)"
 
       - name: Run contest.py script
         run: python contest.py
 
-      - name: Check for changes compared to main
-        id: git-diff
-        run: echo "::set-output name=changes::$(git diff --name-only main)"
-
       - name: Commit and push changes
+        if: steps.git-diff.outputs.changes != ''
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add data/contests.json
           git commit -m "Update JSON file"
-          git push origin automate-c-json-update
+          git push origin HEAD
 
       - name: Create Pull Request
         if: steps.git-diff.outputs.changes != ''
