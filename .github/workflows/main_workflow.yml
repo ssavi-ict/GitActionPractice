@@ -21,12 +21,26 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Check for changes
-        id: git-diff
-        run: echo "::set-output name=changes::$(git diff --name-only)"
+      - name: Check if branch exists
+        run: |
+          branch_exists=$(git ls-remote --exit-code --heads origin automate-c-json-update || echo "")
+          if [ -n "$branch_exists" ]; then
+            git fetch origin automate-c-json-update
+            git checkout automate-c-json-update
+            git pull origin main
+          else
+            git checkout -b automate-c-json-update
+          fi
 
       - name: Run contest.py script
         run: python contest.py
+
+      - name: Check for changes
+        id: git-diff
+        run: |
+          git fetch origin main
+          changes=$(git diff --name-only main)
+          echo "::set-output name=changes::$changes"
 
       - name: Commit and push changes
         if: steps.git-diff.outputs.changes != ''
@@ -35,7 +49,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add data/contests.json
           git commit -m "Update JSON file"
-          git push origin HEAD
+          git push origin automate-c-json-update
 
       - name: Create Pull Request
         if: steps.git-diff.outputs.changes != ''
