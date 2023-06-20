@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Delete branch if exists
         run: |
           git push --delete origin automate-c-json-update
           git branch -D automate-c-json-update
           git fetch --prune origin
-
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Set up Python
         uses: actions/setup-python@v2
