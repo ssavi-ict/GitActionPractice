@@ -1,0 +1,61 @@
+name: Daily Contest Script
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Schedule the workflow to run at 00:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  run_contest_script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check if branch exists
+        run: |
+          branch_exists=$(git ls-remote --exit-code --heads origin automate-c-json-update || echo "")
+          if [ -n "$branch_exists" ]; then
+            git fetch origin automate-c-json-update
+            git checkout automate-c-json-update
+          else
+            git checkout -b automate-c-json-update
+          fi
+
+      - name: Run contest.py script
+        run: python contest.py
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/contests.json
+          git commit -m "Update JSON file"
+          git push origin automate-c-json-update
+
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_branch="automate-c-json-update"
+          pr_title="Automated Pull Request"
+          pr_body="This pull request updates the JSON file automatically."
+
+          # Create a new branch for the pull request
+          git fetch origin automate-c-json-update
+          git checkout -b "$pr_branch"
+
+          # Push the branch to the remote repository
+          git push origin "$pr_branch"
+
+          # Create the pull request
+          hub pull-request -m "$pr_title" -b main -h "$pr_branch" -m "$pr_body"
