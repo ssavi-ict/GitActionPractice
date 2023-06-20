@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Delete branch if exists
+        run: |
+          git push --delete origin automate-c-json-update
+          git branch -D automate-c-json-update
+          git fetch --prune origin
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -34,6 +40,10 @@ jobs:
       - name: Run contest.py script
         run: python contest.py
 
+      - name: Check for changes compared to main
+        id: git-diff
+        run: echo "::set-output name=changes::$(git diff --name-only main)"
+
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
@@ -43,12 +53,20 @@ jobs:
           git push origin automate-c-json-update
 
       - name: Create Pull Request
+        if: steps.git-diff.outputs.changes != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pr_branch="automate-c-json-update"
           pr_title="Automated Pull Request"
           pr_body="This pull request updates the JSON file automatically."
+
+          # Create a new branch for the pull request
+          git fetch origin automate-c-json-update
+          git checkout -b "$pr_branch"
+
+          # Push the branch to the remote repository
+          git push origin "$pr_branch"
 
           # Create the pull request
           hub pull-request -m "$pr_title" -b main -h "$pr_branch" -m "$pr_body"
