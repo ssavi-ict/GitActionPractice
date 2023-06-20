@@ -61,12 +61,5 @@ jobs:
           pr_title="Automated Pull Request"
           pr_body="This pull request updates the JSON file automatically."
 
-          # Create a new branch for the pull request
-          git fetch origin automate-c-json-update
-          git checkout -b "$pr_branch"
-
-          # Push the branch to the remote repository
-          git push origin "$pr_branch"
-
           # Create the pull request
           hub pull-request -m "$pr_title" -b main -h "$pr_branch" -m "$pr_body"
