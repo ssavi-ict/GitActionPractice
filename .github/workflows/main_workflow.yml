@@ -34,15 +34,7 @@ jobs:
       - name: Run contest.py script
         run: python contest.py
 
-      - name: Check for changes
-        id: git-diff
-        run: |
-          git fetch origin main
-          changes=$(git diff --name-only main -- data/contests.json)
-          echo "::set-output name=changes::$changes"
-
       - name: Commit and push changes
-        if: steps.git-diff.outputs.changes != ''
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
@@ -51,7 +43,6 @@ jobs:
           git push origin automate-c-json-update
 
       - name: Create Pull Request
-        if: steps.git-diff.outputs.changes != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
