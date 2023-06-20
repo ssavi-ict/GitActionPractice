@@ -13,12 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Delete branch if exists
-        run: |
-          git push --delete origin automate-c-json-update
-          git branch -D automate-c-json-update
-          git fetch --prune origin
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -31,8 +25,8 @@ jobs:
         run: |
           branch_exists=$(git ls-remote --exit-code --heads origin automate-c-json-update || echo "")
           if [ -n "$branch_exists" ]; then
-            git fetch origin automate-c-json-update
             git checkout automate-c-json-update
+            git pull origin main
           else
             git checkout -b automate-c-json-update
           fi
